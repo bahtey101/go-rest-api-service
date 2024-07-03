@@ -9,4 +9,5 @@ REST API сервис, реализованный на языке GO и хран
 3) github.com/spf13/viper
 ### Запуск проекта:
 1) Visual Studio Code: Запустить отладку (F5);
-2) Terminal: Необходимо переидти в директорию "source" и запустить файл "main.go".
+2) Terminal: Необходимо перейти в директорию "source" и запустить файл "main.go":
+   go run main.go
