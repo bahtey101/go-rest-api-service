@@ -31,23 +31,23 @@ func (handler Handler) InitRoutes() *gin.Engine {
 }
 
 func (handler *Handler) Create(context *gin.Context) {
-	var requset struct {
+	var request struct {
 		Brand        string `json:"brand" binding:"required"`
 		Model        string `json:"model" binding:"required"`
-		Mileage      int64  `json:"mileage" binding:"required"`
-		OwnersNumber int    `json:"owners_number" binding:"required"`
+		Mileage      int64  `json:"mileage"`
+		OwnersNumber int    `json:"owners_number"`
 	}
 
-	if err := context.BindJSON(&requset); err != nil {
+	if err := context.BindJSON(&request); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "create request have invalid params"})
 		return
 	}
 
 	car, err := handler.service.Create(model.Car{
-		Brand:        requset.Brand,
-		Model:        requset.Model,
-		Mileage:      requset.Mileage,
-		OwnersNumber: requset.OwnersNumber,
+		Brand:        request.Brand,
+		Model:        request.Model,
+		Mileage:      request.Mileage,
+		OwnersNumber: request.OwnersNumber,
 	})
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -84,16 +84,21 @@ func (handler *Handler) Get(context *gin.Context) {
 }
 
 func (handler *Handler) Replace(context *gin.Context) {
-	var requset struct {
-		Brand        string `json:"brand" binding:"required"`
-		Model        string `json:"model" binding:"required"`
-		Mileage      int64  `json:"mileage" binding:"required"`
-		OwnersNumber int    `json:"owners_number" binding:"required"`
-	}
-
 	id, err := strconv.ParseInt(context.Param("id"), 10, 32)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "invalid car id param"})
+		return
+	}
+
+	var requset struct {
+		Brand        string `json:"brand" binding:"required"`
+		Model        string `json:"model" binding:"required"`
+		Mileage      int64  `json:"mileage"`
+		OwnersNumber int    `json:"owners_number"`
+	}
+
+	if err := context.BindJSON(&requset); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "replace request have invalid params"})
 		return
 	}
 
@@ -113,25 +118,36 @@ func (handler *Handler) Replace(context *gin.Context) {
 }
 
 func (handler *Handler) Update(context *gin.Context) {
-	var requset struct {
-		Brand        string `json:"brand"`
-		Model        string `json:"model"`
-		Mileage      int64  `json:"mileage"`
-		OwnersNumber int    `json:"owners_number"`
-	}
-
 	id, err := strconv.ParseInt(context.Param("id"), 10, 32)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "invalid car id param"})
 		return
 	}
 
+	type UpdateRequset struct {
+		Brand        string `json:"brand"`
+		Model        string `json:"model"`
+		Mileage      int64  `json:"mileage"`
+		OwnersNumber int    `json:"owners_number"`
+	}
+
+	request := UpdateRequset{
+		Brand:        "-",
+		Model:        "-",
+		Mileage:      -1,
+		OwnersNumber: -1,
+	}
+	if err := context.BindJSON(&request); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "create request have invalid params"})
+		return
+	}
+
 	err = handler.service.Update(model.Car{
 		ID:           id,
-		Brand:        requset.Brand,
-		Model:        requset.Model,
-		Mileage:      requset.Mileage,
-		OwnersNumber: requset.OwnersNumber,
+		Brand:        request.Brand,
+		Model:        request.Model,
+		Mileage:      request.Mileage,
+		OwnersNumber: request.OwnersNumber,
 	})
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

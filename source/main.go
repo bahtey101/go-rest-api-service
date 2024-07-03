@@ -15,6 +15,10 @@ import (
 )
 
 func main() {
+	if err := InitConfig(); err != nil {
+		logrus.Fatalf("error init configs %s", err.Error())
+	}
+
 	repos := repository.NewRepository(viper.GetString("path"))
 	service := service.NewService(repos)
 	handler := handler.NewHandler(service)
@@ -26,11 +30,21 @@ func main() {
 		}
 	}()
 
+	logrus.Print("APP Started")
+
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 	<-quit
 
+	logrus.Print("APP Shutting Down")
+
 	if err := server.Shutdown(context.Background()); err != nil {
 		logrus.Errorf("error occured on server shutting down: %s", err.Error())
 	}
+}
+
+func InitConfig() error {
+	viper.AddConfigPath("configs")
+	viper.SetConfigName("config")
+	return viper.ReadInConfig()
 }

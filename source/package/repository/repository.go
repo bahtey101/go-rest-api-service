@@ -14,7 +14,7 @@ type Repository struct {
 
 type FormatJSON struct {
 	LastID int64       `json:"last_id"`
-	Cars   []model.Car `json:"Cars"`
+	Cars   []model.Car `json:"cars"`
 }
 
 func NewRepository(path string) *Repository {
@@ -24,7 +24,7 @@ func NewRepository(path string) *Repository {
 func (repos *Repository) Create(car model.Car) (*model.Car, error) {
 	jsonInfo, err := repos.ReadJSON()
 	if err != nil {
-		return nil, err
+		jsonInfo = new(FormatJSON)
 	}
 
 	jsonInfo.LastID += 1
@@ -83,26 +83,6 @@ func (repos *Repository) Replace(car model.Car) (*model.Car, error) {
 	return &car, nil
 }
 
-func (repos *Repository) Update(car model.Car) error {
-	jsonInfo, err := repos.ReadJSON()
-	if err != nil {
-		return err
-	}
-
-	for _, _car := range jsonInfo.Cars {
-		if _car.ID == car.ID {
-
-		}
-	}
-
-	err = repos.WriteJSON(*jsonInfo)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (repos *Repository) Delete(car model.Car) error {
 	jsonInfo, err := repos.ReadJSON()
 	if err != nil {
@@ -125,7 +105,7 @@ func (repos *Repository) Delete(car model.Car) error {
 
 func (repos *Repository) WriteJSON(data FormatJSON) error {
 	if _, err := os.Stat(repos.path); os.IsNotExist(err) {
-		data.LastID = 0
+		data.LastID = 1
 	}
 
 	jsonInfo, err := json.Marshal(data)

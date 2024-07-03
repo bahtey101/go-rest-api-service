@@ -14,7 +14,6 @@ func NewService(repos *repository.Repository) *Service {
 }
 
 func (service *Service) Create(car model.Car) (*model.Car, error) {
-	// получить Id
 	return service.repos.Create(car)
 }
 
@@ -30,8 +29,30 @@ func (service *Service) Replace(car model.Car) (*model.Car, error) {
 	return service.repos.Replace(car)
 }
 
-func (service *Service) Update(car model.Car) error {
-	return service.repos.Update(car)
+func (service *Service) Update(updated_car model.Car) error {
+	car, err := service.Get(model.Car{ID: updated_car.ID})
+	if err != nil {
+		return err
+	}
+
+	if updated_car.Brand != "-" {
+		car.Brand = updated_car.Brand
+	}
+	if updated_car.Model != "-" {
+		car.Model = updated_car.Model
+	}
+	if updated_car.Mileage != -1 {
+		car.Mileage = updated_car.Mileage
+	}
+	if updated_car.OwnersNumber != -1 {
+		car.OwnersNumber = updated_car.OwnersNumber
+	}
+
+	_, err = service.repos.Replace(*car)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (service *Service) Delete(car model.Car) error {
