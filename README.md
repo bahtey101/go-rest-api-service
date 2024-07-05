@@ -7,6 +7,14 @@ REST API сервис, реализованный на языке GO и хран
 1) github.com/gin-gonic/gin
 2) github.com/sirupsen/logrus
 3) github.com/spf13/viper
+Запрос на сервер можно отправить по адресу: http://localhost:8080
+Виды запросов:
+POST:   /cars      - создание сущности;
+GET:    /cars      - получение списка всех сущностей;
+GET:    /cars/{id} - получение одной сущности;
+PUT:    /cars/{id} - обновление всех полей сущности;
+PATCH:  /cars/{id} - обновление одного или нескольких полей;
+DELETE: /cars/{id} - удаление сущности.
 ### Запуск проекта:
 1) Visual Studio Code: Запустить отладку (F5);
 2) Terminal: Необходимо перейти в директорию "source" и запустить файл "main.go":
