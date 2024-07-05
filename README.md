@@ -7,7 +7,8 @@ REST API сервис, реализованный на языке GO и хран
 1) github.com/gin-gonic/gin
 2) github.com/sirupsen/logrus
 3) github.com/spf13/viper
-Запрос на сервер можно отправить по адресу: http://localhost:8080
+
+### Запрос на сервер можно отправить по адресу: http://localhost:8080
 Виды запросов:
 POST:   /cars      - создание сущности;
 GET:    /cars      - получение списка всех сущностей;
